@@ -22,12 +22,16 @@ const IFACE_CLASS = {
  * @param  {[type]} pid [description]
  * @return {[type]}     [description]
  */
-function USB(vid, pid){
+function USB(vid, pid, port){
   EventEmitter.call(this);
   var self = this;
   this.device = null;
   if(vid && pid){
-    this.device = usb.findByIds(vid, pid);
+    var devices = USB.findPrinter();
+    var index = devices.findIndex(function(each){
+      return each.portNumbers[0] == +port && each.deviceDescriptor.idVendor == vid && each.deviceDescriptor.idProduct == pid
+    });
+    this.device = devices[index]
   }else{
     var devices = USB.findPrinter();
     if(devices && devices.length)
